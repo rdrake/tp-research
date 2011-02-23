@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+       Remove this if you use the .htaccess -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title></title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--  Mobile viewport optimized: j.mp/bplateviewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Place favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <!-- CSS : implied media="all" -->
+  <link rel="stylesheet" href="css/style.css?v=2">
+  <link rel="stylesheet" href="css/jquery-ui.css">
+  <link rel="stylesheet" href="css/jquery.weekcalendar.css">
+
+  <style type="text/css">
+    html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #search-query {
+      font-size: 500%;
+      width: 100%;
+    }
+
+    #search-wrapper {
+      width: 80%;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 50px;
+    }
+
+    #contact-photo {
+      width: 128px;
+      height: 192px;
+      float: left;
+    }
+
+    #contact-schedule {
+      float: right;
+    }
+
+    #contact-widget, #calendar-widget {
+      display: none;
+      overflow: hidden;
+    }
+
+    #calendar {
+      width: 100%;
+      clear: both;
+    }
+
+    #term-selector {
+      text-align: right;
+      float: right;
+    }
+  </style>
+
+  <!-- Uncomment if you are specifically targeting less enabled mobile browsers
+  <link rel="stylesheet" media="handheld" href="css/handheld.css?v=2">  -->
+
+  <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
+  <script src="js/libs/modernizr-1.6.min.js"></script>
+
+</head>
+
+<body>
+
+  <div id="container">
+    <header>
+
+    </header>
+
+    <div id="main">
+      <div id="search-wrapper">
+        <input id="search-query" type="text" class="ui-widget ui-widget-content ui-corner-all ui-keyboard-preview" />
+      </div>
+
+      <div id="contact-widget">
+        <img id="contact-photo" src="img/default64.png">
+        <h1 id="contact-name"></h1>
+        <button id="contact-schedule">Schedule</button>
+      </div>
+
+      <div id="calendar-widget">
+        <select id="term-selector">
+          <option value="2011-01-10">Winter 2011</option>
+          <option value="2010-09-09">Fall 2010</option>
+          <option value="2010-05-10">Summer 2010</option>
+          <option value="2010-01-11">Winter 2010</option>
+          <option value="2009-09-10">Fall 2009</option>
+          <option value="2009-05-11">Summer 2009</option>
+          <option value="2009-01-05">Winter 2009</option>
+          <option value="2008-09-04">Fall 2008</option>
+          <option value="2008-05-05">Summer 2008</option>
+          <option value="2008-01-07">Winter 2008</option>
+          <option value="2007-09-14">Fall 2007</option>
+          <option value="2007-04-30">Summer 2007</option>
+          <option value="2007-01-08">Winter 2007</option>
+          <option value="2006-09-07">Fall 2006</option>
+          <option value="2006-05-01">Summer 2006</option>
+          <option value="2006-01-09">Winter 2006</option>
+          <option value="2005-09-08">Fall 2005</option>
+          <option value="2005-05-02">Summer 2005</option>
+          <option value="2005-01-03">Winter 2005</option>
+          <option value="2004-09-09">Fall 2004</option>
+          <option value="2004-05-05">Summer 2004</option>
+          <option value="2004-01-07">Winter 2004</option>
+          <option value="2003-09-04">Fall 2003</option>
+        </select>
+
+        <div id="calendar"></div>
+      </div>
+    </div>
+
+    <footer>
+
+    </footer>
+  </div> <!--! end of #container -->
+
+  <!-- Javascript at the bottom for fast page loading -->
+  <script src="js/libs/jquery-1.5.min.js"></script>
+  <script src="js/libs/jquery-ui-1.8.9.custom.min.js"></script>
+  <script src="js/libs/jquery.weekcalendar.js"></script>
+
+  <script src="js/libs/date-en-US.js"></script>
+
+  <!-- scripts concatenated and minified via ant build script-->
+  <script src="js/plugins.js"></script>
+  <script src="js/script.js"></script>
+  <!-- end concatenated and minified scripts-->
+
+  <script>
+    // Hide from the boogieman.  AKA Prototype.
+    jQuery.noConflict();
+
+    jQuery(document).ready(function($) {
+      var events = [];
+
+      $("#term-selector").change(function() {
+        $("#calendar").weekCalendar("gotoWeek", Date.parse($(this).val()));
+      });
+
+      var getLinksFrom = function(eid) {
+        return $.getJSON("/links/from", {
+          eid: eid
+        });
+      };
+
+      var Days = {
+        m: 0,
+        t: 1,
+        w: 2,
+        r: 3,
+        f: 4
+      };
+
+      var getLinksTo = function(eids) {
+        var getLinks = function(eid) {
+          return $.getJSON("/links/to", {
+            eid: eid,
+            type: "schedules",
+            expand: "true"
+          },
+          function(data) {
+            if (data.data.length == 0) {
+              return;
+            }
+
+            var result = data.data[0];
+
+            if (result.day == "&nbsp;") {
+              return;
+            }
+
+            var start = Date.parse(result.date_start).add(Days[result.day]).days().add(parseInt(result.hour_start)).hours().add(parseInt(result.min_start)).minutes();
+            var end = Date.parse(result.date_start).add(Days[result.day]).days().add(parseInt(result.hour_end)).hours().add(parseInt(result.min_end)).minutes();
+
+            var end_date = Date.parse(result.date_end);
+            var count = 0;
+
+            if ((start != null) && (end != null)) {
+              events.push({
+                id: result.eid,
+                start: start,
+                end: end,
+                title: result.location
+              });
+            }
+          });
+        };
+
+        return $.map(eids, getLinks);
+      };
+
+      var getSchedule = function(eid, cb) {
+        events = [];
+
+        $.when(getLinksFrom(eid)).then(function(data) {
+          var promises = getLinksTo(data.data);
+
+          $.when.apply($, promises).then(function(eids) {
+            cb(events);
+          });
+        });
+      };
+
+      $("#calendar").weekCalendar({
+        timeslotsPerHour: 2,
+        businessHours: { start: 8, end: 22, limitDisplay: true },
+        firstDayOfWeek: 1,
+        daysToShow: 5,
+        height: function($calendar) {
+          return 660;
+        },
+        readonly: true,
+        buttons: false
+      });
+
+      $("#calendar").weekCalendar("gotoWeek", Date.parse("2011-01-10"));
+
+      var getEvents = function(eid) {
+        getSchedule(eid, function(evts) {
+          $("#calendar").weekCalendar({ data: { events: evts }});
+          $("#calendar").weekCalendar("refresh");
+        });
+      };
+
+      var updateDetails = function(name) {
+        //$("#contact-name").text(name);
+        $("#contact-widget").dialog({ title: name });
+
+        $.getJSON("https://ajax.googleapis.com/ajax/services/search/images?callback=?", {
+            v: "1.0",
+            q: name + " site:uoit.ca",
+            rsz: "1"
+          },
+          function(data) {
+            var path = (data.responseData.results.length > 0) ?
+              data.responseData.results[0].unescapedUrl : "img/default64.png";
+            $("#contact-photo").attr("src", path);
+          }
+        );
+
+        $("#contact-widget").dialog({
+          resizable: false
+        });
+      };
+
+      var populate = function(name, eid) {
+        updateDetails(name);
+        getEvents(eid);
+      };
+
+      $("#contact-schedule").button().click(function() {
+        $("#calendar-widget").dialog({
+          resizable: false,
+          width: 850,
+          height: 700
+        });
+      });
+
+      $("#search-query").autocomplete({
+        source: function(request, response) {
+          $.getJSON("/search", {
+            q: request.term,
+            expand: true
+          },
+          function(data) {
+            response($.map(data.data, function(item) {
+              return {
+                label: item.name,
+                value: item.name,
+                eid: item.eid
+              }
+            }));
+          });
+        },
+        select: function(event, ui) {
+          populate(ui.item.value, ui.item.eid);
+        }
+      }).focus();/*.keyboard({
+        layout: "qwerty",
+        position: {
+          of: $("#search-query"),//$("body"),
+          my: "center top",
+          at: "center bottom"
+        }
+      });*/
+    });
+  </script>
+
+  <!--[if lt IE 7 ]>
+    <script src="js/libs/dd_belatedpng.js"></script>
+    <script> DD_belatedPNG.fix('img, .png_bg'); //fix any <img> or .png_bg background-images </script>
+  <![endif]-->
+</body>
+</html>

@@ -1,0 +1,12 @@
+*~
+*.swp
+*.out
+
+*.pyc
+*.pyo
+
+eids.txt
+entities.db
+
+uoit_data.idx
+uoit_link.idx
