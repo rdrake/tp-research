@@ -5,6 +5,7 @@ Nothing in this repository is guaranteed or even expected to work.
 
 # Authors #
 Generally:
+
  - Richard Drake (rdrake, me!)
  - Ken Pu (kenpu)
 
