@@ -72,8 +72,31 @@ def fetch_myc(term, subjects):
 
   return fetch(url, data)
 
-with open("myc.htmls", "w") as f:
-  for term in fetch_terms():
-    print "Fetching", term
+if __name__ == '__main__':
+  from optparse import OptionParser
+  import sys
+  p = OptionParser()
+  p.add_option('--term', dest='term')
+  p.add_option('--all', dest='all', default=False, action="store_true")
+  p.add_option('-o', dest="filename")
+  (opt, args) = p.parse_args()
+
+  if opt.all:
+    terms = list(fetch_terms())
+  elif opt.term:
+    terms = [opt.term]
+  else:
+    print "Need term specification."
+    p.print_usage()
+    sys.exit(0)
+
+  if opt.filename:
+    f = open(opt.filename, "w")
+  else:
+    f = sys.stdout
+
+  for term in terms:
+    print >>sys.stderr, "Fetching", term
     print >>f, fetch_myc(term, fetch_subjects(term)).lower()
 
+  f.close()

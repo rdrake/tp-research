@@ -49,11 +49,10 @@ bin/myc/tryLexer.class : src/myc/tryLexer.java
 	$(JAVAC) -d bin -s src src/myc/tryLexer.java
 
 jar:
-	$(autojar) -c $(CP) -o bin/myc_json.jar -m src/Manifest.txt parseMyc.class
+	$(autojar) -c $(CP) -o bin/parse.jar -m src/Manifest.txt parseMyc.class
 
 py:
-	cp src/fetchMyc.py bin
-	cp src/storeMyc.py bin
+	cp src/*.py bin
 
 clean:
 	rm -rf \

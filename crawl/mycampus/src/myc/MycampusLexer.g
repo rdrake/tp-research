@@ -8,12 +8,16 @@ package myc;
 }
 
 @members {
-boolean startField = false;
-boolean startBold = false;
-boolean startInstruct = false;
-boolean startAvail = false;
-boolean startSchedule = false;
-boolean startComments = false;
+  boolean startField = false;
+  boolean startBold = false;
+  boolean startInstruct = false;
+  boolean startAvail = false;
+  boolean startSchedule = false;
+  boolean startComments = false;
+  public static String strippedText(String string) {
+      String text = string.replaceAll("\\r|\\n", "");
+      return text.replaceAll("&amp;", "&");
+  }
 }
 
 START_TITLE
@@ -25,10 +29,8 @@ UOD
   ;
   
 TEXT
-  : {startField|startBold|startInstruct}?=> (~'<')+ {
-      String text = $text.replaceAll("\\r|\\n", "");
-      if (startField | startBold) 
-        text = text.replaceAll("&amp;", "&");
+  : {startField||startBold||startInstruct}?=> (~'<')+ {
+      String text = strippedText($text);
         
       if(startInstruct | startSchedule)
         // This is to strip away the (<abbr title="primary">p</abbr>)

@@ -10,27 +10,21 @@ from datetime import datetime
 from optparse import OptionParser
 
 parser = OptionParser()
-parser.add_option('--engine', dest='engine')
-parser.add_option('--database', dest='dbname', default='uoit')
+parser.add_option("--url", dest='url', help="""
+e.g.:
+  --url postgres://<user>:<password>@localhost/<dbname>
+  --url sqlite:///<filename>
+""")
 
 (opt, args) = parser.parse_args()
 
-if not (opt.dbname and opt.engine):
+if not (args or opt.url):
   parser.print_help()
   sys.exit()
-else:
-  if opt.engine.startswith('postgres'):
-    url = 'postgres://ken_pu:csci3030u@localhost/%s' % opt.dbname
-  elif opt.engine.startswith('sqlite'):
-    url = 'sqlite:///%s.sq3' % opt.dbname
-  else:
-    print 'Unknown engine'
-    sys.exit(0)
 
-  print 'Using "%s" database "%s"' % (opt.engine, opt.dbname)
-  print "url=%s" % url
+print "url=%s" % opt.url
 
-engn = create_engine(url)
+engn = create_engine(opt.url)
 
 Base = declarative_base()
 

@@ -1,8 +1,8 @@
 package myc;
 
 class Instructor {
-	String name;
-	String position;
+	public String name;
+	public String position;
 	public Instructor(String name, String position) {
 		this.name = name;
 		this.position = position;

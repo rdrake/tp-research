@@ -22,8 +22,10 @@ options {
 	}
 	@Override
 	public void reportError(RecognitionException e) {
-	  System.err.println("Unexpected token: " + tokenNames[e.getUnexpectedType()]);
+	  System.err.println("Unexpected token: " 
+                     + tokenNames[e.getUnexpectedType()]);
 	  System.err.println("@ line: " + e.line);
+	  System.err.println("token: '" + e.token.getText() + "'");
 	  System.exit(0);
 	}
 }
@@ -60,6 +62,7 @@ title
     {
       this.section = new Section();
       this.section.title = $TEXT.text;
+      p("section.title=" + this.section.title);
     }
   ;
 
@@ -99,19 +102,23 @@ fragment instructor_list returns [List<Instructor> list]
     $list = new Vector<Instructor>();
     p("\t\tinstructor_list");
   }
-  ( (TEXT START_INSTRUCTOR_TITLE)=> 
-    n=TEXT START_INSTRUCTOR_TITLE t=TEXT END_INSTRUCTOR_TITLE
-    {
-      $list.add(new Instructor($n.text, $t.text));
+  ( n=TEXT
+    { // Split by ',' and add to instructor
+      for(String name: $n.text.split("\\s*,\\s*"))
+        if(name.trim().length() > 0) {
+          list.add(new Instructor(name.trim()));
+          p("adding instructor \"" + name.trim() + "\"");
+        }
     }
-  | n=TEXT
-    {
-      $list.add(new Instructor($n.text));
+  | START_INSTRUCTOR_TITLE t=TEXT END_INSTRUCTOR_TITLE
+    { // Modify the last instructor title
+      if(list.size() > 0) {
+        Instructor person = list.get(list.size()-1);
+        person.position = $t.text.trim();
+        p("\"" + person.name + "\" has position \"" + person.position + "\"");
+      }
     }
   | TBA
-    {
-      $list.add(new Instructor("TBA"));
-    }
   )+
   ;
 
@@ -166,18 +173,22 @@ schedule
     type=schedule_entry // Type
     {
       this.schedule.type = $type.text;
+      p("schedule.type = " + this.schedule.type);
     }
     time=schedule_entry // Time
     {
       this.schedule.time = $time.text;
+      p("schedule.time = " + this.schedule.time);
     }
     days=schedule_entry // Days
     {
       this.schedule.days = $days.text;
+      p("schedule.days = " + this.schedule.days);
     }
     where=schedule_entry // Where
     {
       this.schedule.where = $where.text;
+      p("schedule.where = " + this.schedule.where);
     }
     date=schedule_entry // Date range
     {
@@ -204,7 +215,7 @@ fragment schedule_entry returns [String text]
   : START_SCHEDULE_VALUE 
     (
       TBA   {$text = "TBA";}
-    | TEXT  {$text = $TEXT.text;}
+    | TEXT  {$text = $TEXT.text; p("schedule_entry TEXT=" + $TEXT.text);}
     ) END_SCHEDULE_VALUE
   ;
 
