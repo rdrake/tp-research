@@ -10,3 +10,7 @@ entities.db
 
 uoit_data.idx
 uoit_link.idx
+
+*.class
+classes
+lib
