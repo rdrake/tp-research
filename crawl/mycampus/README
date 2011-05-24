@@ -16,9 +16,9 @@ them together to do what you want.
 === Download and insert to database just one summar ===
 $ python fetch.py --term 201105 \
   | java -jar parse.jar         \
-  | python store.py --url sqlite3:///mycampus_summer.sq3
+  | python store.py --url sqlite:///mycampus_summer.sq3
 
 === Download everything and insert into database ===
 $ python fetch.py --all  \
   | java -jar parse.jar  \
-  | python store.py --url sqlite3:///mycampus_summer.sq3
+  | python store.py --url sqlite:///mycampus_summer.sq3
