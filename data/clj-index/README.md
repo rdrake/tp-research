@@ -4,7 +4,11 @@ T2 rewritten in Clojure.
 
 ## Usage
 
-N/A
+This updates the dependencies from the maven repository
+    lein deps   
+
+This runs the main code
+    lein run -m sandbox.a
 
 ## License
 
