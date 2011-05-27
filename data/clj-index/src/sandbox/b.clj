@@ -30,7 +30,7 @@
 (defn -main [& args]
   (println "Hello world")
   (let [index (create-index "./myindex")
-        doc1 (create-document {"name" "Ken Pu" "address" "905 Greenleaf"})
+        doc1 (create-document {"name" "Ken Pu" "address" "101 Bloor Street East"})
         doc2 (create-document {"name" "Richard Drake" 
                                "address" "2000 Simcoe Street North"})]
     (doto index 
