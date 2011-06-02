@@ -9,9 +9,11 @@
 
 (def db {:classname   "org.sqlite.JDBC"
          :subprotocol "sqlite"
-         :subname     "/home/rdrake/Downloads/uoit-mycampus.sq3"})
+         :subname     "/home/kenpu/a.sq3"})
+
+(defn results-of [table]
+  (with-connection db
+      (cql/with-results [rs (cql/table (keyword table))] (seq rs))))
 
 (defn -main [& args]
-  (with-connection db
-                  (cql/with-results [rs (cql/table :courses)]
-                                    (doseq [r rs] (println (:title r))))))
+  (print (results-of "T")))
