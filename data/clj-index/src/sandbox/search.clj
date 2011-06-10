@@ -13,7 +13,9 @@
         reader    (create-reader index-path)
         query-str (apply str (interpose " " args))
         query     (create-query query-str)
+        start     (System/currentTimeMillis)
         topdocs   (.search searcher query 10)]
     (println (str "Found " (.totalHits topdocs) " results."))
     (doseq [[i result] (indexed (get-documents reader (.scoreDocs topdocs)))]
-      (println (str i " : " result)))))
+      (println (str i " : " result)))
+    (println "Took " (- (System/currentTimeMillis) start) " ms to search.")))
