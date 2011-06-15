@@ -9,7 +9,7 @@
     (org.apache.lucene.util Version)))
 
 (defn create-analyzer []
-  (SimpleAnalyzer.))
+  (StandardAnalyzer. Version/LUCENE_32))
 
 (defn create-index [path]
   (let [dir (-> (File. path) SimpleFSDirectory.)]
