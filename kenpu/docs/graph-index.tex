@@ -1,0 +1,116 @@
+\documentclass{article}
+\usepackage{amsmath,amssymb,latexsym, color}
+
+\include{common}
+
+\begin{document}
+\title{Building Graph Indexes for Entity/Relational Databases}
+\author{The Justice League}
+\date{June, 2011}
+\maketitle
+
+\section{The entity relational data model}
+
+\begin{tabular}{|l|p{4in}|} \hline
+$\mathcal{E}$ & the collection of all entity sets. This corresponds to a
+collection of tables. \\
+$E$ & some specific entity set.  This corresponds to some specific table.\\
+$e$ & some specific entity.  This corresponds to some specific tuple in a
+table. \\\hline\hline
+$\mathcal{R}$ & the collection of all relationships.  This can be a collection
+of foreign key constraints, or SQL queries. \\
+$R$ & some specific relationship.  A relation can be specified by either
+foreign key constraints or SQL queries. \\
+$r$ & some specific relationship entry.  This corresponds to a tuple from a
+multi-way join query. We will distinguish $r$ and $R$ by referring to them as
+entity groups and relationships.\\ \hline\hline
+$\mathbf{A}$ & the universe of all possible attribute values.  This is the
+collection of all column names in the relational database. \\
+$\mathbf{U}$ & the universe of all possible tuple cell values.  This is really
+for the convenience of formal definitions. \\
+$\mathbf{U}(\alpha)$ & the universe of all possible values of a particular
+attribute $\alpha\in\mathbf{A}$. \\ \hline
+$\alpha$ & an attribute from $\mathbf{A}$.  Its domain is
+$\mathbf{U}(\alpha)$.\\
+$\beta$ & a link of some relationship. \\\hline
+\end{tabular}
+
+\subsection{Functions on entities and entity sets}
+Given an entity $e$, it has a set of attributes:
+$$\F{attr}(e)\subseteq\mathbf{A}$$
+Formally, the entity is a function $e:\F{attr}(e)\to\mathbf{U}$.
+Each entity has a unique identifier denoted by $\F{id}(e)$.
+
+An entity set $E$ is a collection of entities with the same attributes:
+$$\forall e, e'\in E,\ \F{attr}(e) = \F{attr}(e')$$
+Each entity set has a name: $\F{name}(E)$.
+
+Therefore, it makes sense to define $\F{attr}(E)$ to make the attributes of the
+entity set $E$.
+
+\subsection{Functions on entity groups and relationships}
+
+It's important to distinguish the two concepts: a relationship is defined by
+either foreign key constraints or SQL queries, while an entity group is a tuple
+that belongs to the join query of a relationship.
+
+Let $R$ be a relationship.  It's defined by links and attributes.
+Links and attributes are subsets of the attribute names.
+$$\F{link}(R)\subseteq\mathbf{A}$$
+$$\F{attr}(R)\subseteq\mathbf{A}$$
+The difference between links and attributes are that links refer to entity sets,
+while attributes refer to additional data introduced by the relationship.
+
+We can think of $R$ as a function (in the same spirit as entities) over the
+links.
+\begin{eqnarray*}
+  R &:& \F{link}(R) \to \mathcal{E} \\
+\end{eqnarray*}
+
+Each entity group $r$ of $R$ is a function that maps links of $R$ to entities
+from the respective entity sets, and attributes of $R$ to some attribute value.
+
+Given a link $\beta\in\F{link}(R)$, we have 
+$r(\beta)\in R(\beta)$, and for an attribute $\alpha$,
+$r(\alpha)\in\mathbf{U}(\alpha)$.
+
+\subsection{An example}
+
+\textcolor{red}{Do this as a homework.}
+
+\section{Graph Index}
+
+\begin{tabular}{|l|p{4in}|}\hline
+$d$ & a document \\
+$\gamma$ & a field in a document \\
+$\TEXT$ & all possible text values.\\
+$\mathbf{I}$ & An index.\\ \hline
+\end{tabular}
+
+A relational database is completely characterized by:
+$\mathbf{DB} = (\mathcal{E}, \mathcal{R})$.  In this section, we will specify
+the index structures of the database.
+
+\subsection{Documents: a universal element}
+
+Text indexes are completely unstructured in the sense that it can only contain
+documents.  A document $d$ is characterized by
+\begin{itemize}
+\item its attributes: $\F{field}(d)$
+\item its field values.  We treat $d$ as a function of the type
+$$d:\F{field}\to\TEXT$$
+So, given a field $\gamma$, the text value is given by $d(\gamma)$.
+\end{itemize}
+
+Note, different documents may have different fields.
+
+\subsection{Indexing functions}
+
+A text analyzer is a function:
+
+$$\Phi:\TEXT \to \template{list}{\TEXT}$$
+which maps a text string to a sequence of text strings.
+
+
+
+\end{document}
