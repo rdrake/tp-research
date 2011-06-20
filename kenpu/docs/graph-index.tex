@@ -98,19 +98,118 @@ documents.  A document $d$ is characterized by
 \begin{itemize}
 \item its attributes: $\F{field}(d)$
 \item its field values.  We treat $d$ as a function of the type
-$$d:\F{field}\to\TEXT$$
+$$d:\F{field}(d)\to\TEXT$$
 So, given a field $\gamma$, the text value is given by $d(\gamma)$.
 \end{itemize}
 
 Note, different documents may have different fields.
 
+The constructor of a field is denoted as $\gamma(x, y)$ where $x$ is the field
+label, and $y$ the value.
+
 \subsection{Indexing functions}
 
-A text analyzer is a function:
+A (generic) text analyzer is a function:
 
 $$\Phi:\TEXT \to \template{list}{\TEXT}$$
 which maps a text string to a sequence of text strings.
 
+An field specific analyzer is an analyzer that depends on the field:
+$$\Phi : \F{field}(d)\times\TEXT \to\template{list}\TEXT$$
+So field specific analyzers takes two arguments $(\gamma\in\F{field}(d),
+x\in\TEXT)$.  We may denote $\Phi_\gamma = \lambda x.\ \Phi(\gamma,x)$.
 
+\subsection{A text index}
+A text index $\mathbf{I} = \left<\mathcal{D}, \Phi\right>$ is a collection of
+documents $\mathcal{D} = \{d_1, d_2, \dots, d_n\}$, and analyzer (generic or
+field specific) $\Phi$.
+
+The objective of our research is to investigate the following problems:
+\begin{itemize}
+\item mapping between relational databases $\mathbf{DB}$ and text indexes
+$\mathbf{I}$.
+\item answer complex queries concerning $\mathbf{DB}$ using the corresponding
+text index $\mathbf{I}$.
+\item map the query answers from the text index $\mathbf{I}$ back to the
+relational data model of $\mathbf{DB}$.
+\end{itemize}
+
+\textcolor{red}{We actually should be very precise at the {\em types} of queries
+that we wish to support even if we intend to deal with keyword queries.}
+
+\section{Mapping relational data model to document data model}
+
+Given a database $\mathbf{DB} = (\mathcal{E}, \mathcal{R})$.  We wish to define
+a mapping $h:\mathbf{DB}\mapsto \mathbf{I}$.
+
+\subsection{Mapping entities to documents}
+
+Given an entity $e\in E$, we need to define the document $h(e)$.  Each attribute
+$\alpha\in\F{attr}(e)$, and its value $e(\alpha)$ is mapped to a field in the
+document.
+
+The attribute-based fields are defined as:
+$$A(e) = \{\gamma(\alpha, e(\alpha)) : \alpha\in\F{attr}(e)\}
+ \cup \left\{\gamma\left(*,
+\sum_{\alpha\in\F{attr}(e)}e(\alpha)\right)\right\}$$
+
+The schema-based fields are defined as:
+$$B(e) = \{\gamma(\F{ent-set}, \F{name}(E)),
+           \gamma(\F{ent-id}, \F{id}(e))\}$$
+
+We introduce a special field $*$ that consists of the concatenation of the
+values of all the attributes of $e$.
+
+The document $h(e)$ is defined as 
+$\F{doc}(A\cup B)$.
+
+\textcolor{red}{We are not indexing the attribute names by $h$.  This is not
+good because we cannot query using ``{\em course title database}''.  An {\em
+easy} way of dealing with it is to add $\F{name}(\alpha)$ to $e(\alpha)$ in the
+fields.}
+
+\subsection{Mapping relationships to documents}
+
+Let $R$ be a relationship, and $r\in R$ be an entity group.  We define three
+groups of fields in the document $h(r)$.
+
+\begin{eqnarray*}
+L(r) &=& \{\gamma(\beta,\F{id}(r(\beta))) : \beta\in\F{links}(r)\} \cup
+     \left\{
+        \gamma\left(**,\sum_{\beta\in\F{links}(r)}\F{id}(r(\beta))\right)
+      \right\} \\
+A(r) &=& \makebox{ as defined above for entities} \\
+B(r) &=& \{\gamma(\F{relationship}, \F{name}(R))\}
+\end{eqnarray*}
+
+Finally, $h(r) = \F{doc}(A(r)\cup B(r)\cup L(r))$.
+
+The resulting document $h(r)$ has two {\em default} fields, $*$ and $**$.  The
+former represents all text values of its data attributes, and the latter
+represents all entities that it connects to.
+
+\subsection{Functions on the index}
+
+Collectively, we refer to the resulting documents $\{h(e)\}\cup\{h(r)\}$ as the
+text index $\textbf{I}$ of the database $\textbf{DB}$.
+
+Recall, $\textbf{I}$ requires the specification of an analyzer $\Phi$ as well.
+If $\Phi$ is a simple generic analyzer, then the text can support keyword
+search, but if the more space costly $q$-gram analyzer is used, then the index
+can also support approximate string matching.  We note that we can use field
+specific analyzers $\Phi_\gamma$ so that certain fields are indexed using simple
+analyzers and others are indexed using $q$-grams.  \textcolor{red}{But this
+causes interesting headaches when creating a query...}
+
+The search function is denoted by a function
+$\mathbf{I}:\TEXT\to\template{list}{\mathcal{D}}$ that maps strings to a list of
+documents.
+
+\section{Search and query processing}
+
+The text index $\mathbf{I} = h(\mathbf{DB})$ assists in the query answering
+because it is capable of keyword searches and approximate string matching.
+
+\textcolor{blue}{to be completed... June 20, 08,40.am}
 
 \end{document}
