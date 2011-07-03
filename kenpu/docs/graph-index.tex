@@ -210,6 +210,65 @@ documents.
 The text index $\mathbf{I} = h(\mathbf{DB})$ assists in the query answering
 because it is capable of keyword searches and approximate string matching.
 
-\textcolor{blue}{to be completed... June 20, 08,40.am}
+\subsection{Queries}
+\label{sec:query}
+A query is an operation that retrieves a {\em set} of entities or entity-groups.
+We define a query using a formal grammar.
+\begin{eqnarray*}
+\mathrm{query} 
+  &\rightarrow& (\mathtt{:is}\ \mathrm{doctype}) \\
+  &|& (\mathtt{:in}\ \mathrm{table}) \\
+  &|& (\mathtt{:has}\ \mathrm{field}) \\
+  &|& (\mathtt{:contains}\ \mathrm{id}) \\
+  &|& (\mathtt{:contains}\ \mathrm{id}\ \mathtt{:as}\ \mathrm{link}) \\
+  &|& (\mathtt{:keyword}\ \mathrm{text})\\
+  &|& (\mathtt{:keyword}\ \mathrm{text}\ \mathtt{:as}\ \mathrm{attribute})\\
+  &|& (\mathtt{:and}\ \mathrm{query}+) \\
+  &|& (\mathtt{:or}\ \mathrm{query}+) \\
+  &|& (\mathtt{:not}\ \mathrm{query})\\
+\mathrm{doctype}
+  &\rightarrow& \mathtt{:entity}\ |\ \mathtt{:group} \\
+\mathrm{table} &\rightarrow& \mathcal{E}\cup\mathcal{R} \\
+\mathrm{field} &\rightarrow& \mathbf{A} \\
+\mathrm{link} &\rightarrow& \mathbf{A} \\
+\mathrm{attribute} &\rightarrow& \mathbf{A} \\
+\mathrm{id} &\rightarrow& \{\mathrm{id}(e) : e\in\mathbf{E}\} \\
+\mathrm{text} &\rightarrow& \TEXT \\
+\end{eqnarray*}
+
+Here is an example of a query that gets all entities containing the word
+``Superman'' some where.
+$$q = 
+  (\mathtt{:and}\ (\mathtt{:is}\ \mathtt{entity})
+    \ (\mathtt{:keyword}\ \textsf{``Superman''})) $$
+If we want to get look up ``Superman'' under an attribute ``alias'', we need
+something like:
+$$q = 
+  (\mathtt{:and}\ (\mathtt{:is}\ \textit{entity})
+    \ (\mathtt{:keyword}\ \textsf{``Superman''}\ 
+        \mathtt{:as}\ \textit{alias})) $$
+
+Suppose that, through the query $q$, we have discovered that \textit{Superman}
+is entity $P4012$, we can use the entity ID $P4012$ to find related entities:
+$$q = 
+  (\mathtt{:and}
+   \ (\mathtt{:is}\ \textit{group})
+   \ (\mathtt{:contains}\ P4012)) $$
+
+If we are particularly interested at {\em Superman} as a superhero, we may focus
+on groups which views $P4012$ as a hero:
+$$q = 
+  (\mathtt{:and}
+   \ (\mathtt{:is}\ \textit{group})
+   \ (\mathtt{:contains}\ P4012\ \mathtt{:as}\ \textit{hero})) $$
+
+\subsection{Denotational Semantics}
+The term {\em denotational semantics} refers to the formal definition of the
+{\em correct} answer to a query in terms of the sets of elements it should
+contain in its result set.  The denotational semantics of the query constructs
+defined in Section~\ref{sec:query} is quite straight-forward.
+
+\textcolor{red}{To be completed.}
+
 
 \end{document}
