@@ -1,0 +1,20 @@
+#!/bin/bash
+
+LIBS="clojure-1.2.1 clojure-contrib-1.2.0 jline-0.9.5 lucene-core-3.0.3"
+
+repo=$HOME/.m2/repository
+
+CLASSPATH=.
+for lib in $LIBS
+do
+  path=`find $repo -name "$lib*.jar" -print`
+  if [[ -z "$path" ]]
+  then
+    echo "Warning: $lib does not exist."
+  else
+    echo "Including $lib"
+    CLASSPATH=$CLASSPATH:$path
+  fi
+done
+
+java -cp $CLASSPATH jline.ConsoleRunner clojure.main $*

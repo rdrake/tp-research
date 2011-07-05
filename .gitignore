@@ -8,9 +8,10 @@
 eids.txt
 entities.db
 
-uoit_data.idx
-uoit_link.idx
+*.idx
 
 *.class
 classes
 lib
+
+crawler/mycampus/bin/*
