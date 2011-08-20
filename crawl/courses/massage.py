@@ -14,8 +14,10 @@ for line in fi.input():
 		continue
 	
 	if start_of_line(line):
-		courses.append(" ".join(acc))
-		print " ".join(acc)
+		# The 2011-2012 calendar has all text set to justify, need to fix that.
+		course_info = re.sub(r'\s+', ' ', " ".join(acc))
+		courses.append(course_info)
+		print course_info
 		del acc[:]
 	
 	acc.append(line.strip())

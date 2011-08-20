@@ -7,4 +7,4 @@ PYTHON=/usr/bin/python2			# Path to Python executable to run.
 # Converts the PDF to raw text, strips out line numbers and other garbage,
 # and finally runs the resulting text through multiple sinks to achieve the
 # purified course information.
-pdftotext -raw $1 - | grep -Ev '(^[0-9]{3}$)|SECTION|(UNDER|)GRADUATE COURSE DESCRIPTIONS' | $PYTHON massage.py | $PYTHON extract_course_info.py
+pdftotext -raw $1 - | grep -Evi '(^[0-9]{3}$)|SECTION|(UNDER|)GRADUATE COURSE DESCRIPTIONS' | $PYTHON massage.py | $PYTHON extract_course_info.py
