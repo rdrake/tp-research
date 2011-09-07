@@ -1,18 +1,33 @@
-# Does awful things.  Downloads 50k HTML pages.  Don't ever do this.
-from urllib2 import build_opener, HTTPError, URLError
+BASE_URL = "http://ssbprod1.aac.mycampus.ca/pls/prod/"
+DEPTS_URL = BASE_URL + "www_directory.directory_uoit.p_main"
+PRSNS_URL = BASE_URL + "www_directory.directory_uoit.p_ShowDepartment?department_name_in="
 
-BASE_URL = "http://ssbprod1.aac.mycampus.ca/pls/prod/www_directory.directory_uoit.p_showindividual?home_url_in=&individual_id_in="
+from lxml import html
+from time import sleep
+from urllib2 import urlopen
 
-opener = build_opener()
-opener.addheaders = [("User-agent", "TP-Crawler/1.0")]
+depts_html = urlopen(DEPTS_URL)
+depts_doc = html.parse(depts_html)
+depts_ids = [option.values()[0] for option in depts_doc.findall(".//option")]
 
-for i in range(50000):
-  try:
-    r = opener.open("%s%d" % (BASE_URL, i))
-    data = r.read()
-    f = open("%d.html" % i, "w")
-    f.write(data)
-  except HTTPError:
-    print "Failed to open page %d." % i
-  except URLError:
-    print "URL error!"
+dir_hrefs = []
+
+# Iterate through all departments, grabbing all links to employee information pages.
+for dept_id in depts_ids:
+	depts_staff_html = urlopen(PRSNS_URL + dept_id)
+	depts_staff_doc = html.parse(depts_staff_html)
+	dir_hrefs.extend([person.attrib["href"] for person in depts_staff_doc.findall(".//td/a[@href]")])
+
+current = 0
+total = len(dir_hrefs)
+
+for href in dir_hrefs:
+	current += 1
+	print "Grabbing article %s (%d of %d)" % (href, current, total)
+
+	f = open("%s.html" % href, "w")
+	doc = urlopen(BASE_URL + href)
+
+	f.write(doc.read())
+
+	sleep(0.1)
