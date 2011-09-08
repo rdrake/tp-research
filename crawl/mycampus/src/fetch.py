@@ -75,9 +75,11 @@ def fetch_myc(term, subjects):
 if __name__ == '__main__':
   from optparse import OptionParser
   import sys
+  from time import time
   p = OptionParser()
   p.add_option('--term', dest='term')
   p.add_option('--all', dest='all', default=False, action="store_true")
+  p.add_option('--from', dest='after')
   p.add_option('-o', dest="filename")
   (opt, args) = p.parse_args()
 
@@ -85,6 +87,8 @@ if __name__ == '__main__':
     terms = list(fetch_terms())
   elif opt.term:
     terms = [opt.term]
+  elif opt.after:
+    terms = [x for x in fetch_terms() if x >= opt.after]
   else:
     print "Need term specification."
     p.print_usage()
@@ -94,9 +98,11 @@ if __name__ == '__main__':
     f = open(opt.filename, "w")
   else:
     f = sys.stdout
-
+  
+  print "Fetching terms: %s" % terms
   for term in terms:
-    print >>sys.stderr, "Fetching", term
+    s = time()
+    print >>sys.stderr, "\tFetching", term,
     print >>f, fetch_myc(term, fetch_subjects(term)).lower()
-
+    print >>sys.stderr, "in %.2f seconds" % (time()-s)
   f.close()

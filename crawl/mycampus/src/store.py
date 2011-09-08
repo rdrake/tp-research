@@ -87,7 +87,6 @@ Base.metadata.create_all(engn)
 
 Session = sessionmaker()
 Session.configure(bind = engn)
-session = Session()
 
 def sections():
   for line in sys.stdin.xreadlines:
@@ -147,9 +146,7 @@ def parse_semester(line):
   """
   return (line, line[-4:])
 
-def store_section(section_js):
-
-  sql = Session()
+def store_section(sql, section_js, i):
   (code, title, sec_code, sec_num) = parse_title(section_js['title'])
   course = Course()
   course.code = code
@@ -164,17 +161,15 @@ def store_section(section_js):
   sec.registration_start, sec.registration_end = parse_daterange(
     section_js['registration'])
   sec.semester, sec.year = parse_semester(section_js['semester'])
+
   sec.course = course.code
   sec.sec_code = sec_code
   sec.sec_number = sec_num
 
   if sql.query(Course).filter(Course.code == course.code).count() == 0:
     sql.add(course)
-    sql.commit()
 
   sql.add(sec)
-
-  sql.commit()
 
   if section_js.get('schedule_list'):
     for sch_js in section_js.get('schedule_list'):
@@ -188,7 +183,6 @@ def store_section(section_js):
       sch.location = sch_js.get('where')
       sch.section_id = sec.id
       sql.add(sch)
-      sql.commit()
       for inst_js in sch_js.get('instructor_list', []):
         name = inst_js.get('name')
         position = inst_js.get('position')
@@ -198,21 +192,22 @@ def store_section(section_js):
             instructor = Instructor()
             instructor.name = name
             sql.add(instructor)
-            sql.commit()
           else:
             instructor = q[0]
           teaches = Teaches()
           teaches.instructor_id = instructor.id
           teaches.schedule_id = sch.id
           sql.add(teaches)
-          sql.commit()
   
-def load(lines):
+def load(session, lines):
   for (i, line) in enumerate(lines):
-    print "line: %d" % (i+1)
+    if i and i % 100 == 0:
+      print "line: %d" % (i+1)
     sec_js = json.loads(line)
-    store_section(sec_js)
+    store_section(session, sec_js, i)
 
 if __name__ == '__main__':
+  session = Session()
   lines = sys.stdin.xreadlines()
-  load(lines)
+  load(session, lines)
+  session.commit()
