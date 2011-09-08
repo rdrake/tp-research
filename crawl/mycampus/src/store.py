@@ -6,7 +6,7 @@ import sys
 import json
 import re
 from datetime import datetime
-
+from time import time
 from optparse import OptionParser
 
 parser = OptionParser()
@@ -200,14 +200,17 @@ def store_section(sql, section_js, i):
           sql.add(teaches)
   
 def load(session, lines):
+  print >>sys.stderr, "Loading database..."
+  s = time()
   for (i, line) in enumerate(lines):
-    if i and i % 100 == 0:
-      print "line: %d" % (i+1)
     sec_js = json.loads(line)
     store_section(session, sec_js, i)
+    if i and i % 100 == 0:
+      session.commit()
+  session.commit()
+  print >>sys.stderr, "loaded %d sections in %.2f seconds" % (i, time()-s)
 
 if __name__ == '__main__':
   session = Session()
   lines = sys.stdin.xreadlines()
   load(session, lines)
-  session.commit()

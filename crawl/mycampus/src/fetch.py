@@ -102,7 +102,6 @@ if __name__ == '__main__':
   print "Fetching terms: %s" % terms
   for term in terms:
     s = time()
-    print >>sys.stderr, "\tFetching", term,
     print >>f, fetch_myc(term, fetch_subjects(term)).lower()
-    print >>sys.stderr, "in %.2f seconds" % (time()-s)
+    print >>sys.stderr, "Fetched semester %s in %.2f seconds" % (term, time()-s)
   f.close()

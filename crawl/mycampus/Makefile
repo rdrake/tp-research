@@ -52,7 +52,7 @@ jar:
 	$(autojar) -c $(CP) -o bin/parse.jar -m src/Manifest.txt parseMyc.class
 
 py:
-	cp src/*.py bin
+	cp src/*.py src/*.sh bin
 
 clean:
 	rm -rf \
