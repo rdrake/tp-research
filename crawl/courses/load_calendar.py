@@ -13,7 +13,7 @@ def get_course_descriptions(pdf):
   section_pattern = re.compile(r"^(UNDER)?GRADUATE COURSE DESCRIPTIONS$")
   end_pattern = re.compile(r'^INDEX$')
   entry_pattern = re.compile(r"^[A-Z]{4} [0-9]{4}. [A-Z]+")
-  ignore_patterns = [re.compile(r'^section \d+:'), re.compile('^\d+$')]
+  ignore_patterns = [re.compile(r'^section\s*\d+:'), re.compile('^\d+$')]
   sentence_pattern = re.compile(r"(^\s*$)|(.*\.)|(.*\s+)")
   in_section = False
   buf = []
