@@ -168,8 +168,10 @@ def store_section(sql, section_js, i):
 
   if sql.query(Course).filter(Course.code == course.code).count() == 0:
     sql.add(course)
+    sql.commit()
 
   sql.add(sec)
+  sql.commit()
 
   if section_js.get('schedule_list'):
     for sch_js in section_js.get('schedule_list'):
@@ -183,6 +185,7 @@ def store_section(sql, section_js, i):
       sch.location = sch_js.get('where')
       sch.section_id = sec.id
       sql.add(sch)
+      sql.commit()
       for inst_js in sch_js.get('instructor_list', []):
         name = inst_js.get('name')
         position = inst_js.get('position')
@@ -192,12 +195,14 @@ def store_section(sql, section_js, i):
             instructor = Instructor()
             instructor.name = name
             sql.add(instructor)
+            sql.commit()
           else:
             instructor = q[0]
           teaches = Teaches()
           teaches.instructor_id = instructor.id
           teaches.schedule_id = sch.id
           sql.add(teaches)
+          sql.commit()
   
 def load(session, lines):
   print >>sys.stderr, "Loading database..."
