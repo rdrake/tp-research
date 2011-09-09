@@ -9,7 +9,7 @@ from subprocess import Popen, PIPE
 import re
 
 def get_course_descriptions(pdf):
-  p = Popen(['pdftotext', '-enc', 'ASCII7', '-q', '-nopgbrk', pdf, '-'], stdout=PIPE)
+  p = Popen(['pdftotext', '-raw', '-enc', 'ASCII7', '-q', '-nopgbrk', pdf, '-'], stdout=PIPE)
   section_pattern = re.compile(r"^(UNDER)?GRADUATE COURSE DESCRIPTIONS$")
   end_pattern = re.compile(r'^INDEX$')
   entry_pattern = re.compile(r"^[A-Z]{4} [0-9]{4}. [A-Z]+")
